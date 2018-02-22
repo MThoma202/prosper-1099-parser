@@ -14,6 +14,9 @@ import java.util.regex.Pattern;
  */
 @Component
 public class Prosper1099BTransactionFinder {
+    private static final String SHORT = "Short";
+    private static final String LONG = "Long";
+    private static final String DESCRIPTION_PREFIX = "Prosper Note ";
 
     private static final Pattern DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN =
             Pattern.compile("(\\d\\d/\\d\\d/\\d\\d\\d\\d) (\\d\\d/\\d\\d/\\d\\d\\d\\d) \\$(\\d*\\.\\d*) (.*)");
@@ -23,9 +26,8 @@ public class Prosper1099BTransactionFinder {
             + "Long−term transactions for which basis is not reported to the IRS−−Report on Form 8949, Part II, with Box E checked\\.|"
             + "1c\\. Date sold 1b\\. Date 1d\\. Proceeds 6\\. Reported to IRS 1a\\. Description Other|"
             + "or disposed acquired of property|" + "\\d* \\d* \\d* \\d* \\d*−\\d* \\d* \\d\\d/\\d\\d/\\d\\d .*");
-    private static final String SHORT = "Short";
-    private static final String LONG = "Long";
     private static final Pattern SHORT_TERM_OR_LONG_TERM_PATTERN = Pattern.compile("Box 2\\. (" + SHORT + '|' + LONG + ")−term");
+    private static final Pattern REPORTING_CATEGORY_PATTERN = Pattern.compile("Applicable check box on Form 8949 ([A-Z])");
 
 
     List<List<String>> find1099BTransactions(List<String> lines, boolean includeShortTerm, boolean includeLongTerm) {
@@ -46,13 +48,16 @@ public class Prosper1099BTransactionFinder {
 
                 boolean isShortTerm = getIsShortTerm(iterator);
 
+                String reportingCategory = getReportingCategory(iterator);
+
                 if ((isShortTerm && includeShortTerm) || (!isShortTerm && includeLongTerm)) {
                     List<String> transaction = new ArrayList<>();
                     transaction.add(dateSoldDateAcquiredProceedsDescriptionMatcher.group(1)); // date sold
                     transaction.add(dateSoldDateAcquiredProceedsDescriptionMatcher.group(2)); // date acquired
                     transaction.add(dateSoldDateAcquiredProceedsDescriptionMatcher.group(3)); // sales proceeds
-                    transaction.add(dateSoldDateAcquiredProceedsDescriptionMatcher.group(4)); // description
+                    transaction.add(DESCRIPTION_PREFIX + dateSoldDateAcquiredProceedsDescriptionMatcher.group(4)); // description
                     transaction.add(cost);
+                    transaction.add(reportingCategory);
                     transactions.add(transaction);
                 }
             }
@@ -62,8 +67,7 @@ public class Prosper1099BTransactionFinder {
     }
 
     private String getCost(Iterator<String> iterator) {
-        String nextLine;
-        nextLine = getNextLine(iterator);
+        String nextLine = getNextLine(iterator);
 
         Matcher costMatcher = COST_PATTERN.matcher(nextLine);
 
@@ -75,10 +79,8 @@ public class Prosper1099BTransactionFinder {
     }
 
     private boolean getIsShortTerm(Iterator<String> iterator) {
-        String nextLine;
-        getNextLine(iterator);
-        getNextLine(iterator);
-        nextLine = getNextLine(iterator);
+        skipLines(iterator, 2);
+        String nextLine = getNextLine(iterator);
 
         Matcher shortTermOrLongTermMatcher = SHORT_TERM_OR_LONG_TERM_PATTERN.matcher(nextLine);
 
@@ -88,6 +90,26 @@ public class Prosper1099BTransactionFinder {
         }
 
         return shortTermOrLongTermMatcher.group(1).equals(SHORT);
+    }
+
+    private String getReportingCategory(Iterator<String> iterator) {
+        skipLines(iterator, 9);
+        String nextLine = getNextLine(iterator);
+
+        Matcher reportingCategoryMater = REPORTING_CATEGORY_PATTERN.matcher(nextLine);
+
+        if (!reportingCategoryMater.matches()) {
+            throw new IllegalStateException(
+                    "Expected next line to match '" + REPORTING_CATEGORY_PATTERN.pattern() + "' but was: " + nextLine);
+        }
+
+        return reportingCategoryMater.group(1);
+    }
+
+    private void skipLines(Iterator<String> iterator, int numLinesToSkip) {
+        for (int i = 0; i < numLinesToSkip; i++) {
+            getNextLine(iterator);
+        }
     }
 
     private String getNextLine(Iterator<String> iterator) {

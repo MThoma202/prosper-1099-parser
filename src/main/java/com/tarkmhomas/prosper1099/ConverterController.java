@@ -59,7 +59,7 @@ public class ConverterController {
 
         StringBuilder out = new StringBuilder();
         CSVPrinter printer = new CSVPrinter(out,
-                CSVFormat.DEFAULT.withHeader("Date Sold", "Date Acquired", "Sales Proceeds", "Description", "Cost"));
+                CSVFormat.DEFAULT.withHeader("Date Sold", "Date Acquired", "Sales Proceeds", "Description", "Cost", "Reporting Category"));
         printer.printRecords(csvRecords);
 
         return out.toString();
