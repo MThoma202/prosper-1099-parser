@@ -1,0 +1,39 @@
+<html lang="en" ng-app="app">
+<head>
+  <meta charset="UTF-8">
+  <title>File Upload Demo</title>
+  <script type="application/javascript" src="/assets/angular/angular.min.js"></script>
+  <script type="application/javascript" src="/assets/jquery/jquery.min.js"></script>
+  <script type="application/javascript" src="/assets/bootstrap/js/bootstrap.min.js"></script>
+
+  <script type="application/javascript" src="/assets/app.module.js"></script>
+  <script type="application/javascript" src="/assets/controllers.js"></script>
+  <script type="application/javascript" src="/assets/directives.js"></script>
+  <script type="application/javascript" src="/assets/services.js"></script>
+
+  <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/assets/app.css">
+
+</head>
+<body ng-controller="FileUploadController">
+<div class="container">
+  <h2 class="title">Prosper 1099-B Parser</h2>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <form>
+        <div class="form-group">
+          <label for="myFileField" class="row">Please select a PDF file containing Prosper 1099-B transactions to convert to
+            CSV: </label>
+          <input type="file" file-model="myFile" class="form-control row" id="myFileField"/>
+        </div>
+        <button ng-click="uploadFile()" class="btn btn-primary">Upload File</button>
+      </form>
+    </div>
+  </div>
+  <div>
+    <pre>{{serverResponse}}</pre>
+  </div>
+</div>
+</body>
+</html>

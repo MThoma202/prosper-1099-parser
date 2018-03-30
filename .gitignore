@@ -27,3 +27,7 @@ nbdist/
 
 ### Mac OSX ###
 .DS_Store
+
+### Client Dependencies ###
+.asscache
+src/assets/vendor/

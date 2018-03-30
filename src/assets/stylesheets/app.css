@@ -1,0 +1,17 @@
+pre {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.container {
+    padding: 5rem 10rem;
+}
+
+.title {
+    text-align: center;
+    padding-bottom: 2rem;
+}
+
+.row {
+    margin-bottom: 1.5rem;
+}

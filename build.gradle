@@ -4,20 +4,31 @@ buildscript {
     }
     repositories {
         mavenCentral()
+        mavenLocal()
         maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://repo.grails.org/grails/core" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("com.bertramlabs.plugins:asset-pipeline-gradle:2.14.10")
+        classpath("com.craigburke.gradle:client-dependencies:1.4.0")
     }
 }
 
+plugins {
+    id 'com.craigburke.client-dependencies' version '1.4.0'
+}
+
+apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'asset-pipeline'
 
 group = 'com.tarkmhomas'
 version = '0.0.1-SNAPSHOT'
@@ -32,8 +43,81 @@ repositories {
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.codehaus.groovy:groovy")
     compile('org.apache.pdfbox:pdfbox:2.0.4')
     compile("org.apache.commons:commons-csv:1.5")
     compile("org.bouncycastle:bcprov-jdk16:1.46")
+    compile("com.bertramlabs.plugins:asset-pipeline-spring-boot:2.14.10")
+    compile("org.slf4j:slf4j-api:1.7.25")
+    compile("org.slf4j:log4j-over-slf4j:1.7.25")
+    assets('com.craigburke.angular:angular-annotate-asset-pipeline:2.4.1')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+clientDependencies {
+
+    registry 'realBower', type: 'bower', url: 'https://registry.bower.io'
+    realBower {
+        'jquery'('2.2.x', from: 'dist') {
+            include 'jquery.js'
+            include 'jquery.min.js'
+        }
+        'materialize'('0.97.x', from: 'dist', into: 'materialize') {
+            include "**"
+        }
+        'bootstrap'('4.0.x', from: 'dist', into: 'bootstrap') {
+            include "**"
+        }
+    }
+
+    npm {
+        'angular'('1.5.x', into: 'angular') {
+            include 'angular.js'
+            include 'angular.min.js'
+        }
+        'angular-resource'('1.5.x', into: 'angular') {
+            include 'angular-resource.js'
+            include 'angular-resource.min.js'
+        }
+        'angular-mocks'('1.5.x', into: 'angular') {
+            include 'angular-mocks.js'
+            include 'angular-mocks.min.js'
+        }
+        'angular-ui-router'('0.2.18', into: 'angular') {
+            include 'angular-ui-router.js'
+            include 'angular-ui-router.min.js'
+        }
+        'angular-animate'('1.5.x', into: 'angular') {
+            include 'angular-animate.js'
+            include 'angular-animate.min.js'
+        }
+        'angular-cookies'('1.5.x', into: 'angular') {
+            include 'angular-cookies.js'
+            include 'angular-cookies.min.js'
+        }
+    }
+}
+
+assets {
+    minifyJs = true
+    minifyCss = true
+    enableSourceMaps = true
+    configOptions = [:]
+
+    minifyOptions = [
+            languageMode     : 'ES5',
+            targetLanguage   : 'ES5', // Can go from ES6 to ES5 for those bleeding edgers
+            optimizationLevel: 'SIMPLE',
+            angularPass      : true // Can use @ngInject annotation for Angular Apps
+    ]
+
+    //includes = []
+    excludes = ['**/*.less'] // Example Exclude GLOB pattern
+
+    // for plugin packaging
+    packagePlugin = false //set to true if this is a library
+
+    //developmentRuntime can be turned off
+    developmentRuntime = false
+}
+
