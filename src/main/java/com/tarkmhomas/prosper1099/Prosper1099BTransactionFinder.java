@@ -20,13 +20,14 @@ public class Prosper1099BTransactionFinder {
 
     private static final Pattern DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN =
             Pattern.compile("(\\d\\d/\\d\\d/\\d\\d\\d\\d) (\\d\\d/\\d\\d/\\d\\d\\d\\d) \\$(\\d*\\.\\d*) (.*)");
-    private static final Pattern COST_PATTERN = Pattern.compile("Box 1e. \\$(.*)");
-    private static final Pattern IGNORED_LINES_PATTERN = Pattern.compile("1099−B \\(OMB No\\. 1545−0715\\)|"
-            + "Short−term transactions for which basis is not reported to the IRS−−Report on Form 8949, Part I, with Box B checked\\.|"
-            + "Long−term transactions for which basis is not reported to the IRS−−Report on Form 8949, Part II, with Box E checked\\.|"
+    private static final Pattern COST_PATTERN = Pattern.compile("(\\. |)Box 1e. \\$(.*)");
+    private static final Pattern IGNORED_LINES_PATTERN = Pattern.compile("1099(−|-)B \\(OMB No\\. 1545(−|-)0715\\)|"
+            + "2\\\\9IQPE17082\\.PDF|"
+            + "Short(−|-)term transactions for which basis is not reported to the IRS(−−|--)Report on Form 8949, Part I, with Box B checked\\.|"
+            + "Long(−|-)term transactions for which basis is not reported to the IRS(−−|--)Report on Form 8949, Part II, with Box E checked\\.|"
             + "1c\\. Date sold 1b\\. Date 1d\\. Proceeds 6\\. Reported to IRS 1a\\. Description Other|"
-            + "or disposed acquired of property|" + "\\d* \\d* \\d* \\d* \\d*−\\d* \\d* \\d\\d/\\d\\d/\\d\\d .*");
-    private static final Pattern SHORT_TERM_OR_LONG_TERM_PATTERN = Pattern.compile("Box 2\\. (" + SHORT + '|' + LONG + ")−term");
+            + "or disposed acquired of property|" + "\\d* \\d* \\d* \\d* \\d*(−|-)\\d* \\d* \\d\\d/\\d\\d/\\d\\d .*");
+    private static final Pattern SHORT_TERM_OR_LONG_TERM_PATTERN = Pattern.compile("Box 2\\. (" + SHORT + '|' + LONG + ")(−|-)term");
     private static final Pattern REPORTING_CATEGORY_PATTERN = Pattern.compile("Applicable check box on Form 8949 ([A-Z])");
 
 
@@ -75,7 +76,7 @@ public class Prosper1099BTransactionFinder {
             throw new IllegalStateException("Expected next line to match '" + COST_PATTERN.pattern() + "' but was: " + nextLine);
         }
 
-        return costMatcher.group(1);
+        return costMatcher.group(2);
     }
 
     private boolean getIsShortTerm(Iterator<String> iterator) {
