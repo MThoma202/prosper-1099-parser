@@ -25,11 +25,11 @@ import java.util.List;
 public class ConverterController {
 
     private final DocumentParser documentParser;
-    private final Prosper1099BTransactionFinder recordFinder;
+    private final TransactionParser recordFinder;
 
 
     @Autowired
-    ConverterController(DocumentParser documentParser, Prosper1099BTransactionFinder recordFinder) {
+    ConverterController(DocumentParser documentParser, TransactionParser recordFinder) {
         this.documentParser = documentParser;
         this.recordFinder = recordFinder;
     }
@@ -50,7 +50,7 @@ public class ConverterController {
             lines = documentParser.parseDocument(pdDocument);
         }
 
-        List<List<String>> transactions = recordFinder.find1099BTransactions(lines, includeShortTerm, includeLongTerm);
+        List<List<String>> transactions = recordFinder.parse1099BTransactions(lines, includeShortTerm, includeLongTerm);
 
         return generateCsv(transactions);
     }
@@ -59,7 +59,7 @@ public class ConverterController {
 
         StringBuilder out = new StringBuilder();
         CSVPrinter printer = new CSVPrinter(out,
-                CSVFormat.DEFAULT.withHeader("Date Sold", "Date Acquired", "Sales Proceeds", "Description", "Cost", "Reporting Category"));
+                CSVFormat.DEFAULT.withHeader("Date Sold", "Date Acquired", "Sales Proceeds", "Description", "Cost Basis", "Reporting Category"));
         printer.printRecords(csvRecords);
 
         return out.toString();
