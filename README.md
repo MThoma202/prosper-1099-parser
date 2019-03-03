@@ -1,6 +1,11 @@
 # prosper-1099-parser
 This is a simple project to convert PDF files containing Prosper 1099-B transactions to CSV format.
 
+IRS guidelines require transactions for which the basis was **not** reported to be included as separate line items on form 8949.  Since Prosper 1099-B transactions fall into this category, this project helps convert the individual line items into CSV format that can be imported into tax programs to help fill in form 8949.
+
+### Releases
+* v1.0.0 - Latest release that supports both 2017 and 2018 PDF files formats.
+
 ### Prerequisites
 - [JDK 1.8] is installed
 - An internet connection is required to download gradle dependencies
@@ -23,6 +28,7 @@ This is a simple project to convert PDF files containing Prosper 1099-B transact
 * [Materialize]
 * [Bootstrap]
 * [SLF4J]
+* [TestNG]
 
 [JDK 1.8]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [Spring Boot]: http://projects.spring.io/spring-boot/
@@ -36,3 +42,4 @@ This is a simple project to convert PDF files containing Prosper 1099-B transact
 [Materialize]: https://github.com/Dogfalo/materialize
 [Bootstrap]: https://github.com/twbs/bootstrap
 [SLF4J]: https://github.com/qos-ch/slf4j
+[TestNG]: http://github.com/cbeust/testng/
