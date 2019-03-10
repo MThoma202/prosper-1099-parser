@@ -1,7 +1,7 @@
 # prosper-1099-parser
 This is a simple project to convert PDF files containing Prosper 1099-B transactions to CSV format.
 
-IRS guidelines require transactions for which the basis was **not** reported to be included as separate line items on form 8949.  Since Prosper 1099-B transactions fall into this category, this project helps convert the individual line items into CSV format that can be imported into tax programs to help fill in form 8949.
+IRS guidelines require transactions for which the cost basis was **not** reported to the IRS to be included as separate line items on Form 8949.  Since Prosper 1099-B transactions fall into this category, this project can be used to convert the transactions into CSV format that can then be copied and written to a CSV file. The CSV file can then be a) imported into a tax program able to automatically generate Form 8949 (e.g. TaxAct), or b) imported into a spreadsheet to generate a statement as a substitute for Form 8949 that can be attached with Form 8453, or c) given to a tax professional that will know what to do with it.
 
 ### Releases
 * v1.0.0 - Latest release that supports both 2017 and 2018 PDF files formats.
