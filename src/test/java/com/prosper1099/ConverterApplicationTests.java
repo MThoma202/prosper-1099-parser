@@ -1,5 +1,5 @@
 
-package com.tarkmhomas.prosper1099;
+package com.prosper1099;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
