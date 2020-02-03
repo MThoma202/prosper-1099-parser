@@ -1,5 +1,5 @@
 
-package com.tarkmhomas.prosper1099;
+package com.prosper1099;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -12,12 +12,15 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Responsible for parsing PDF documents containing Prosper 1099-B records.
  */
 @Component
 public class DocumentParser {
+    private static final Pattern TAX_YEAR_PATTERN = Pattern.compile("Tax Year (\\d\\d\\d\\d) Combined Form");
 
     List<String> parseDocument(PDDocument document) throws IOException {
 
@@ -35,6 +38,17 @@ public class DocumentParser {
         pdfTextStripper.writeLineSeparator();
 
         return lines;
+    }
+
+    String parseTaxYear(List<String> lines) {
+        for (String line : lines) {
+            Matcher matcher = TAX_YEAR_PATTERN.matcher(line);
+            if (matcher.matches()) {
+                return matcher.group(1);
+            }
+        }
+
+        throw new IllegalStateException("Unable to find tax year - expecting to find 1 line matching: " + TAX_YEAR_PATTERN.pattern());
     }
 
 

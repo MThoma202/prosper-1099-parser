@@ -1,11 +1,13 @@
 
-package com.tarkmhomas.prosper1099;
+package com.prosper1099;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.pdfbox.io.RandomAccessBuffer;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -24,22 +26,22 @@ import java.util.List;
 @Controller
 public class ConverterController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConverterController.class);
+    private static final String EXPECTED_FIRST_LINE = "PROSPER FUNDING LLC";
+
     private final DocumentParser documentParser;
-    private final TransactionParser recordFinder;
+    private final TransactionParsers transactionParsers;
 
 
     @Autowired
-    ConverterController(DocumentParser documentParser, TransactionParser recordFinder) {
+    ConverterController(DocumentParser documentParser, TransactionParsers transactionParsers) {
         this.documentParser = documentParser;
-        this.recordFinder = recordFinder;
+        this.transactionParsers = transactionParsers;
     }
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, value = "/convertPdfToCsv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "text/csv")
-    public String convertPdfToCsv(@RequestParam("file") MultipartFile pdfFile,
-                                  @RequestParam(name = "includeShortTerm", defaultValue = "true") boolean includeShortTerm,
-                                  @RequestParam(name = "includeLongTerm", defaultValue = "true") boolean includeLongTerm)
-            throws IOException {
+    public String convertPdfToCsv(@RequestParam("file") MultipartFile pdfFile) throws IOException {
 
         PDFParser pdfParser = new PDFParser(new RandomAccessBuffer(pdfFile.getInputStream()));
 
@@ -50,17 +52,19 @@ public class ConverterController {
             lines = documentParser.parseDocument(pdDocument);
         }
 
-        List<List<String>> transactions = recordFinder.parse1099BTransactions(lines, includeShortTerm, includeLongTerm);
+        if (lines.isEmpty() || !lines.get(0).equals(EXPECTED_FIRST_LINE)) {
+            throw new IllegalStateException("First line must match \"" + EXPECTED_FIRST_LINE + "\".");
+        }
 
-        return generateCsv(transactions);
-    }
+        String taxYear = documentParser.parseTaxYear(lines);
 
-    private String generateCsv(List<List<String>> csvRecords) throws IOException {
+        TransactionParser transactionParser = transactionParsers.getTransactionParser(taxYear);
+
+        List<List<String>> transactions = transactionParser.parse1099BTransactions(lines);
 
         StringBuilder out = new StringBuilder();
-        CSVPrinter printer = new CSVPrinter(out,
-                CSVFormat.DEFAULT.withHeader("Date Sold", "Date Acquired", "Sales Proceeds", "Description", "Cost Basis", "Reporting Category"));
-        printer.printRecords(csvRecords);
+        CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withHeader(transactionParser.getHeader()));
+        printer.printRecords(transactions);
 
         return out.toString();
     }

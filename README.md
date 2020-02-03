@@ -1,10 +1,18 @@
 # prosper-1099-parser
 This is a simple project to convert PDF files containing Prosper 1099-B transactions to CSV format.
 
-IRS guidelines require transactions for which the cost basis was **not** reported to the IRS to be included as separate line items on Form 8949.  Since Prosper 1099-B transactions fall into this category, this project can be used to convert the transactions into CSV format that can then be copied and written to a CSV file. The CSV file can then be a) imported into a tax program able to automatically generate Form 8949 (e.g. TaxAct), or b) imported into a spreadsheet to generate a statement as a substitute for Form 8949 that can be attached with Form 8453, or c) given to a tax professional that will know what to do with it.
+IRS guidelines require transactions for which the cost basis was **not** reported to the IRS to be included as separate line items on Form 8949. Prosper 1099-B transactions fall into this category.
+
+This project can be used to convert the transactions into CSV format that can then be copied and written to a CSV file. The CSV file can then be a) imported into a tax program able to automatically generate Form 8949 (e.g. TaxAct), or b) imported into a spreadsheet to generate a statement as a substitute for Form 8949 that can be attached with Form 8453, or c) given to a tax professional that will know what to do with it.
+
+### Supported Tax Years
+- [2017]
+- [2018]
+- [2019]
 
 ### Releases
-* v1.0.0 - Latest release that supports both 2017 and 2018 PDF files formats.
+* v1.0.0 - Supports tax years 2017 and 2018
+* v1.1.0 - Added support for tax year 2019
 
 ### Prerequisites
 - [JDK 1.8] is installed
@@ -30,6 +38,9 @@ IRS guidelines require transactions for which the cost basis was **not** reporte
 * [SLF4J]
 * [TestNG]
 
+[2017]: https://www.irs.gov/pub/irs-prior/i8949--2017.pdf
+[2018]: https://www.irs.gov/pub/irs-prior/i8949--2018.pdf
+[2019]: https://www.irs.gov/pub/irs-pdf/i8949.pdf
 [JDK 1.8]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [Spring Boot]: http://projects.spring.io/spring-boot/
 [Gradle]: http://gradle.org/
