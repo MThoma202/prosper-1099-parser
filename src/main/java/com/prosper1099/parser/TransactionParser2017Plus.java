@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +27,10 @@ public class TransactionParser2017Plus implements TransactionParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionParser2017Plus.class);
 
     private static final String DESCRIPTION_PREFIX = "Prosper Note ";
+
+    private static final String CHARGEOFF_IN_DESCRIPTION = "CHARGEOFF";
+    private static final String DATE_SOLD_FOR_CHARGE_OFFS = "12/31/%s";
+    private static final String EXPECTED_CHARGE_OFF_SALES_PROCEEDS = "0.00";
 
     private static final Pattern BOX_1ABCD_DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN =
             Pattern.compile("(\\d\\d/\\d\\d/\\d\\d\\d\\d) (\\d\\d/\\d\\d/\\d\\d\\d\\d) (\\(?\\$\\d*\\.\\d*\\)?) (.*[A-Z]+).*");
@@ -49,17 +52,6 @@ public class TransactionParser2017Plus implements TransactionParser {
         transactionParsers.registerTransactionParser("2017", this);
         transactionParsers.registerTransactionParser("2018", this);
         transactionParsers.registerTransactionParser("2019", this);
-        // TODO Test 2020+ once tax forms are available
-        transactionParsers.registerTransactionParser("2020", this);
-        transactionParsers.registerTransactionParser("2021", this);
-        transactionParsers.registerTransactionParser("2022", this);
-        transactionParsers.registerTransactionParser("2023", this);
-        transactionParsers.registerTransactionParser("2024", this);
-        transactionParsers.registerTransactionParser("2025", this);
-        transactionParsers.registerTransactionParser("2026", this);
-        transactionParsers.registerTransactionParser("2027", this);
-        transactionParsers.registerTransactionParser("2028", this);
-        transactionParsers.registerTransactionParser("2029", this);
     }
 
     @Override
@@ -68,7 +60,7 @@ public class TransactionParser2017Plus implements TransactionParser {
     }
 
     @Override
-    public List<List<String>> parse1099BTransactions(List<String> lines) {
+    public List<List<String>> parse1099BTransactions(List<String> lines, String taxYear) {
 
         Iterator<String> iterator = lines.iterator();
 
@@ -83,33 +75,39 @@ public class TransactionParser2017Plus implements TransactionParser {
             if (dateSoldDateAcquiredProceedsDescriptionMatchResult != null) {
 
                 String dateSold = dateSoldDateAcquiredProceedsDescriptionMatchResult.group(1);
-                LOGGER.debug("dateSold: {}", dateSold);
-
                 String dateAcquired = dateSoldDateAcquiredProceedsDescriptionMatchResult.group(2);
-                LOGGER.debug("dateAcquired: {}", dateAcquired);
-
                 String salesProceeds = parseDollarValue(dateSoldDateAcquiredProceedsDescriptionMatchResult.group(3));
-                LOGGER.debug("salesProceeds: {}", salesProceeds);
-
                 String description = DESCRIPTION_PREFIX + dateSoldDateAcquiredProceedsDescriptionMatchResult.group(4);
-                LOGGER.debug("description: {}", description);
 
-                String costBasis = parseCostBasis(Objects.requireNonNull(getNextMatch(iterator, true, BOX_1E_COST_BASIS_PATTERN,
-                        BOX_1ABCD_DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN, REPORTING_CATEGORY_PATTERN)));
+                String costBasis = parseDollarValue(getNextMatch(iterator, true, BOX_1E_COST_BASIS_PATTERN,
+                        BOX_1ABCD_DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN, REPORTING_CATEGORY_PATTERN).group(1));
 
                 MatchResult nextMatch = getNextMatch(iterator, true, Arrays.asList(BOX_3_COLLECTIBLES_PATTERN, REPORTING_CATEGORY_PATTERN),
                         BOX_1ABCD_DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN, BOX_1E_COST_BASIS_PATTERN);
 
-                String adjustmentCode = parseAdjustmentCode(Objects.requireNonNull(nextMatch));
+                String adjustmentCode = nextMatch.group(1).equals(COLLECTIBLES_ADJUSTMENT_CODE) ? nextMatch.group(1) : null;
 
                 String reportingCategory;
                 if (adjustmentCode == null) {
-                    reportingCategory = parseReportingCategory(Objects.requireNonNull(nextMatch));
+                    reportingCategory = nextMatch.group(1);
                 } else {
-                    reportingCategory = parseReportingCategory(Objects.requireNonNull(
-                            getNextMatch(iterator, true, REPORTING_CATEGORY_PATTERN,
-                                    BOX_1ABCD_DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN, BOX_1E_COST_BASIS_PATTERN)));
+                    reportingCategory = getNextMatch(iterator, true, REPORTING_CATEGORY_PATTERN,
+                                    BOX_1ABCD_DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN, BOX_1E_COST_BASIS_PATTERN).group(1);;
                 }
+
+                if (description.contains(CHARGEOFF_IN_DESCRIPTION) && salesProceeds.equals(EXPECTED_CHARGE_OFF_SALES_PROCEEDS)) {
+                    // Treat worthless securities as though they were capital assets sold or exchanged on the last day of the tax year.
+                    // More details: https://www.irs.gov/publications/p550
+                    dateSold = String.format(DATE_SOLD_FOR_CHARGE_OFFS, taxYear);
+                }
+
+                LOGGER.debug("dateSold: {}", dateSold);
+                LOGGER.debug("dateAcquired: {}", dateAcquired);
+                LOGGER.debug("salesProceeds: {}", salesProceeds);
+                LOGGER.debug("description: {}", description);
+                LOGGER.debug("costBasis: {}", costBasis);
+                LOGGER.debug("adjustmentCode: {}", adjustmentCode);
+                LOGGER.debug("reportingCategory: {}", reportingCategory);
 
                 List<String> transaction = new ArrayList<>();
                 transaction.add(dateSold);
@@ -141,33 +139,6 @@ public class TransactionParser2017Plus implements TransactionParser {
 
         throw new IllegalStateException("Expected dollar value '" + dollarValue + "' to match pattern '"
                 + POSITIVE_DOLLAR_VALUE_PATTERN.pattern() + "' or '" + NEGATIVE_DOLLAR_VALUE_PATTERN.pattern() + "'");
-    }
-
-    String parseCostBasis(MatchResult matchResult) {
-
-        String costBasis = parseDollarValue(matchResult.group(1));
-        LOGGER.debug("costBasis: {}", costBasis);
-
-        return costBasis;
-    }
-
-    String parseAdjustmentCode(MatchResult matchResult) {
-        if (matchResult.group(1).equals(COLLECTIBLES_ADJUSTMENT_CODE)) {
-            String adjustmentCode = matchResult.group(1);
-            LOGGER.debug("adjustmentCode: {}", adjustmentCode);
-
-            return adjustmentCode;
-        }
-
-        return null;
-    }
-
-    String parseReportingCategory(MatchResult matchResult) {
-
-        String reportingCategory = matchResult.group(1);
-        LOGGER.debug("reportingCategory: {}", reportingCategory);
-
-        return reportingCategory;
     }
 
     private MatchResult getNextMatch(Iterator<String> iterator, boolean exceptionIfNotFound, Pattern patternToMatch, Pattern... patternsNotExpected) {

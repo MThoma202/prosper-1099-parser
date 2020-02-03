@@ -3,7 +3,6 @@ package com.prosper1099;
 
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,13 +26,9 @@ public class TransactionParsers {
 
     TransactionParser getTransactionParser(String taxYear) {
         if (!transactionParsers.containsKey(taxYear)) {
-            throw new IllegalStateException("Tax year " + taxYear + " isn't supported. Only tax years " + getSupportedTaxYears() + " are supported.");
+            throw new IllegalStateException("Tax year " + taxYear + " isn't supported.");
         }
 
         return transactionParsers.get(taxYear);
-    }
-
-    private String getSupportedTaxYears() {
-        return Arrays.toString(transactionParsers.keySet().stream().sorted().toArray());
     }
 }

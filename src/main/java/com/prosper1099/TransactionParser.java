@@ -9,5 +9,5 @@ public interface TransactionParser {
 
     String[] getHeader();
 
-    List<List<String>> parse1099BTransactions(List<String> lines);
+    List<List<String>> parse1099BTransactions(List<String> lines, String taxYear);
 }
