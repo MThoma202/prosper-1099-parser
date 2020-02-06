@@ -13,7 +13,7 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("com.bertramlabs.plugins:asset-pipeline-gradle:2.14.10")
-        classpath("com.craigburke.gradle:client-dependencies:1.4.0")
+        classpath("gradle.plugin.com.craigburke.gradle:client-dependencies:1.4.0")
     }
 }
 
