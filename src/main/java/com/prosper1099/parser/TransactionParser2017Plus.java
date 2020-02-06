@@ -34,8 +34,6 @@ public class TransactionParser2017Plus implements TransactionParser {
     private static final Pattern POSITIVE_DOLLAR_VALUE_PATTERN = Pattern.compile("\\$(.*)");
     private static final Pattern NEGATIVE_DOLLAR_VALUE_PATTERN = Pattern.compile("\\(\\$(.*)\\)");
     private static final Pattern BOX_1E_COST_BASIS_PATTERN = Pattern.compile(".*Box 1e\\. (\\(?\\$.*\\)?)");
-    private static final String COLLECTIBLES_ADJUSTMENT_CODE = "C";
-    private static final Pattern BOX_3_COLLECTIBLES_PATTERN = Pattern.compile(".*Box 3\\. (" + COLLECTIBLES_ADJUSTMENT_CODE + ")ollectibles");
     private static final Pattern REPORTING_CATEGORY_PATTERN = Pattern.compile("Applicable check\\s?box on Form 8949 ([A-Z])");
 
     private final TransactionParsers transactionParsers;
@@ -49,22 +47,11 @@ public class TransactionParser2017Plus implements TransactionParser {
         transactionParsers.registerTransactionParser("2017", this);
         transactionParsers.registerTransactionParser("2018", this);
         transactionParsers.registerTransactionParser("2019", this);
-        // TODO Test 2020+ once tax forms are available
-        transactionParsers.registerTransactionParser("2020", this);
-        transactionParsers.registerTransactionParser("2021", this);
-        transactionParsers.registerTransactionParser("2022", this);
-        transactionParsers.registerTransactionParser("2023", this);
-        transactionParsers.registerTransactionParser("2024", this);
-        transactionParsers.registerTransactionParser("2025", this);
-        transactionParsers.registerTransactionParser("2026", this);
-        transactionParsers.registerTransactionParser("2027", this);
-        transactionParsers.registerTransactionParser("2028", this);
-        transactionParsers.registerTransactionParser("2029", this);
     }
 
     @Override
     public String[] getHeader() {
-        return new String[] {"Date Sold", "Date Acquired", "Sales Proceeds", "Description", "Cost Basis", "Adjustment Code", "Reporting Category"};
+        return new String[] {"Date Sold", "Date Acquired", "Sales Proceeds", "Description", "Cost Basis", "Reporting Category"};
     }
 
     @Override
@@ -97,19 +84,8 @@ public class TransactionParser2017Plus implements TransactionParser {
                 String costBasis = parseCostBasis(Objects.requireNonNull(getNextMatch(iterator, true, BOX_1E_COST_BASIS_PATTERN,
                         BOX_1ABCD_DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN, REPORTING_CATEGORY_PATTERN)));
 
-                MatchResult nextMatch = getNextMatch(iterator, true, Arrays.asList(BOX_3_COLLECTIBLES_PATTERN, REPORTING_CATEGORY_PATTERN),
-                        BOX_1ABCD_DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN, BOX_1E_COST_BASIS_PATTERN);
-
-                String adjustmentCode = parseAdjustmentCode(Objects.requireNonNull(nextMatch));
-
-                String reportingCategory;
-                if (adjustmentCode == null) {
-                    reportingCategory = parseReportingCategory(Objects.requireNonNull(nextMatch));
-                } else {
-                    reportingCategory = parseReportingCategory(Objects.requireNonNull(
-                            getNextMatch(iterator, true, REPORTING_CATEGORY_PATTERN,
-                                    BOX_1ABCD_DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN, BOX_1E_COST_BASIS_PATTERN)));
-                }
+                String reportingCategory = parseReportingCategory(Objects.requireNonNull(getNextMatch(iterator, true,  REPORTING_CATEGORY_PATTERN,
+                        BOX_1ABCD_DATE_SOLD_DATE_ACQUIRED_PROCEEDS_DESCRIPTION_PATTERN, BOX_1E_COST_BASIS_PATTERN)));
 
                 List<String> transaction = new ArrayList<>();
                 transaction.add(dateSold);
@@ -117,7 +93,6 @@ public class TransactionParser2017Plus implements TransactionParser {
                 transaction.add(salesProceeds);
                 transaction.add(description);
                 transaction.add(costBasis);
-                transaction.add(adjustmentCode);
                 transaction.add(reportingCategory);
                 transactions.add(transaction);
             }
@@ -149,17 +124,6 @@ public class TransactionParser2017Plus implements TransactionParser {
         LOGGER.debug("costBasis: {}", costBasis);
 
         return costBasis;
-    }
-
-    String parseAdjustmentCode(MatchResult matchResult) {
-        if (matchResult.group(1).equals(COLLECTIBLES_ADJUSTMENT_CODE)) {
-            String adjustmentCode = matchResult.group(1);
-            LOGGER.debug("adjustmentCode: {}", adjustmentCode);
-
-            return adjustmentCode;
-        }
-
-        return null;
     }
 
     String parseReportingCategory(MatchResult matchResult) {
