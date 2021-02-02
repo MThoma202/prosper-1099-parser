@@ -9,13 +9,14 @@ This project can be used to convert the transactions into CSV format that can th
 - [2017]
 - [2018]
 - [2019]
+- [2020]
 
 ### Releases
-* v1.0.0 - Supports tax years 2017 and 2018
-* v1.1.1 - Supports tax years 2017, 2018, and 2019
+* v1.0.0 - Supports tax years 2017 and 2018 only
+* v1.1.2 - Supports tax years 2017 to 2020
 
 ### Prerequisites
-- [JDK 1.8] is installed
+- [JDK 1.8+] is installed
 - An internet connection is required to download gradle dependencies
 
 ### Steps to run:
@@ -40,8 +41,9 @@ This project can be used to convert the transactions into CSV format that can th
 
 [2017]: https://www.irs.gov/pub/irs-prior/i8949--2017.pdf
 [2018]: https://www.irs.gov/pub/irs-prior/i8949--2018.pdf
-[2019]: https://www.irs.gov/pub/irs-pdf/i8949.pdf
-[JDK 1.8]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+[2019]: https://www.irs.gov/pub/irs-prior/i8949--2019.pdf
+[2020]: https://www.irs.gov/pub/irs-pdf/i8949.pdf
+[JDK 1.8+]: https://www.oracle.com/java/technologies/javase-jdk15-downloads.html
 [Spring Boot]: http://projects.spring.io/spring-boot/
 [Gradle]: http://gradle.org/
 [Apache PDFBox]: https://pdfbox.apache.org/
