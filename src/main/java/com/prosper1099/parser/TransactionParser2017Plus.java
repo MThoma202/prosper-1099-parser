@@ -48,6 +48,7 @@ public class TransactionParser2017Plus implements TransactionParser {
         transactionParsers.registerTransactionParser("2018", this);
         transactionParsers.registerTransactionParser("2019", this);
         transactionParsers.registerTransactionParser("2020", this);
+        transactionParsers.registerTransactionParser("2021", this);
     }
 
     @Override
