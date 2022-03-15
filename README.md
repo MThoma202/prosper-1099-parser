@@ -3,7 +3,18 @@ This is a simple project to convert PDF files containing Prosper 1099-B transact
 
 IRS guidelines require transactions for which the cost basis was **not** reported to the IRS to be included as separate line items on Form 8949. Prosper 1099-B transactions fall into this category.
 
-This project can be used to convert the transactions into CSV format that can then be copied and written to a CSV file. The CSV file can then be a) imported into a tax program able to automatically generate Form 8949 (e.g. TaxAct), or b) imported into a spreadsheet to generate a statement as a substitute for Form 8949 that can be attached with Form 8453, or c) given to a tax professional that will know what to do with it.
+This project can be used to convert the transactions into CSV format that can then be copied and written to a CSV file.
+
+The CSV file can then be:
+1. Imported into [TaxAct](https://refer.taxact.com/s/MarkThomas14) that is able to automatically generate Form 8949
+    - [instructions here](https://www.taxact.com/support/881/2017/how-to-import-stock-information-using-a-csv-file-from-your-broker) to import the CSV file into TaxAct
+2. Converted to TXF format and imported into [TurboTax](https://turbo.tax/tm7e7s3c) to automatically generate form 8949
+    - [instructions here](https://github.com/MThoma202/prosper-1099-parser/issues/9) to convert from CSV to TXF format
+    - [instructions here](https://ttlc.intuit.com/community/entering-importing/help/how-do-i-import-from-the-txf-file/00/25642) to import the TXF file into TurboTax
+3. Imported into a spreadsheet to generate a statement as a substitute for Form 8949, that can be attached with [Form 8453](https://www.irs.gov/pub/irs-pdf/f8453.pdf)
+4. Given to a tax professional that will know what to do with it
+
+For option 1, use [this referral link](https://refer.taxact.com/s/MarkThomas14) to save 20% off TaxAct. This is the option I've been using for the last few years and it works great. For option 2, use [this referral link](https://turbo.tax/tm7e7s3c) to save 20% off TurboTax.
 
 ### Supported Tax Years
 - [2017]
@@ -19,9 +30,9 @@ This project can be used to convert the transactions into CSV format that can th
 
 ### Steps to run:
 1. Download/clone the project. 
-1. Open the command prompt and `cd` to the root directory of the project.
-1. Run the command `./gradlew clientInstall bootRun` to download client dependencies and start the service (on Windows use `gradlew.bat` instead of `./gradlew`).
-1. Browse to: http://localhost:8080
+2. Open the command prompt and `cd` to the root directory of the project.
+3. Run the command `./gradlew clientInstall bootRun` to download client dependencies and start the service (on Windows use `gradlew.bat` instead of `./gradlew`).
+4. Browse to: http://localhost:8080
 
 ### Tech Used
 * [Spring Boot]
