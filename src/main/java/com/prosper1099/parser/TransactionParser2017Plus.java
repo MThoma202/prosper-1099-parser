@@ -49,6 +49,25 @@ public class TransactionParser2017Plus implements TransactionParser {
         transactionParsers.registerTransactionParser("2019", this);
         transactionParsers.registerTransactionParser("2020", this);
         transactionParsers.registerTransactionParser("2021", this);
+        transactionParsers.registerTransactionParser("2022", this);
+        transactionParsers.registerTransactionParser("2023", this);
+        transactionParsers.registerTransactionParser("2024", this);
+        transactionParsers.registerTransactionParser("2025", this);
+        transactionParsers.registerTransactionParser("2026", this);
+        transactionParsers.registerTransactionParser("2027", this);
+        transactionParsers.registerTransactionParser("2028", this);
+        transactionParsers.registerTransactionParser("2029", this);
+        transactionParsers.registerTransactionParser("2030", this);
+        transactionParsers.registerTransactionParser("2031", this);
+        transactionParsers.registerTransactionParser("2032", this);
+        transactionParsers.registerTransactionParser("2033", this);
+        transactionParsers.registerTransactionParser("2034", this);
+        transactionParsers.registerTransactionParser("2035", this);
+        transactionParsers.registerTransactionParser("2036", this);
+        transactionParsers.registerTransactionParser("2037", this);
+        transactionParsers.registerTransactionParser("2038", this);
+        transactionParsers.registerTransactionParser("2039", this);
+        transactionParsers.registerTransactionParser("2040", this);
     }
 
     @Override
