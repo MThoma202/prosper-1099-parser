@@ -47,7 +47,7 @@ dependencies {
     compile("com.bertramlabs.plugins:asset-pipeline-spring-boot:2.14.10")
     compile("org.slf4j:slf4j-api:1.7.25")
     compile("org.slf4j:log4j-over-slf4j:1.7.25")
-    assets('com.craigburke.angular:angular-annotate-asset-pipeline:2.4.1')
+    compile('com.craigburke.angular:angular-annotate-asset-pipeline:2.4.1')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile("org.testng:testng:6.14.3")
 }
@@ -97,7 +97,7 @@ clientDependencies {
 }
 
 assets {
-    minifyJs = true
+    minifyJs = false
     minifyCss = true
     enableSourceMaps = true
     configOptions = [:]
