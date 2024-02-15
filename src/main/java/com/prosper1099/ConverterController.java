@@ -63,7 +63,7 @@ public class ConverterController {
         List<List<String>> transactions = transactionParser.parse1099BTransactions(lines);
 
         StringBuilder out = new StringBuilder();
-        CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withHeader(transactionParser.getHeader()));
+        CSVPrinter printer = new CSVPrinter(out, CSVFormat.Builder.create().setHeader(transactionParser.getHeader()).build());
         printer.printRecords(transactions);
 
         return out.toString();

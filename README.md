@@ -24,10 +24,11 @@ For option 2, use [this referral link](https://turbo.tax/tm7e7s3c) to save 20% o
 - [2020]
 - [2021]
 - [2022]
-- 2023+ (the parser should continue working for future years assuming the PDF file format doesn't change)
+- [2023]
+- 2024+ (the parser should continue working for future years assuming the PDF file format doesn't change)
 
 ### Prerequisites
-- [JDK 1.8+] is installed
+- [JDK 17] is installed
 - An internet connection is required to download gradle dependencies
 
 ### Steps to run:
@@ -62,8 +63,9 @@ This can happen when port 8080 is already in use by another application.
 [2019]: https://www.irs.gov/pub/irs-prior/i8949--2019.pdf
 [2020]: https://www.irs.gov/pub/irs-prior/i8949--2020.pdf
 [2021]: https://www.irs.gov/pub/irs-prior/i8949--2021.pdf
-[2022]: https://www.irs.gov/pub/irs-pdf/i8949.pdf
-[JDK 1.8+]: https://www.oracle.com/java/technologies/javase-jdk15-downloads.html
+[2022]: https://www.irs.gov/pub/irs-prior/i8949--2022.pdf
+[2023]: https://www.irs.gov/pub/irs-prior/i8949--2023.pdf
+[JDK 17]: https://adoptium.net/temurin/releases/?version=17
 [Spring Boot]: http://projects.spring.io/spring-boot/
 [Gradle]: http://gradle.org/
 [Apache PDFBox]: https://pdfbox.apache.org/
