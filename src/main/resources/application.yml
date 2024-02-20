@@ -1,2 +1,5 @@
 logging.level:
   com.prosper1099: INFO
+spring.servlet.multipart:
+  max-file-size: 100MB
+  max-request-size: 100MB
