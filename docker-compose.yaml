@@ -1,0 +1,10 @@
+version: '3'
+services:
+  prosper-1099-parser:
+    image: openjdk:17-jdk-bullseye
+    volumes:
+      - './:/opt/prosper-1099-parser'
+    working_dir: /opt/prosper-1099-parser
+    ports:
+      - '8080:8080'
+    command: ./gradlew clientInstall bootRun
