@@ -20,7 +20,8 @@ import java.util.regex.Pattern;
  */
 @Component
 public class DocumentParser {
-    private static final Pattern TAX_YEAR_PATTERN = Pattern.compile("Tax Year (\\d\\d\\d\\d) Combined Form");
+    private static final Pattern TAX_YEAR_PATTERN_2017_TO_2023 = Pattern.compile("Tax Year (\\d\\d\\d\\d) Combined Form");
+    private static final Pattern TAX_YEAR_PATTERN_2024_PLUS = Pattern.compile("(20[234]\\d)");
 
     List<String> parseDocument(PDDocument document) throws IOException {
 
@@ -42,13 +43,17 @@ public class DocumentParser {
 
     String parseTaxYear(List<String> lines) {
         for (String line : lines) {
-            Matcher matcher = TAX_YEAR_PATTERN.matcher(line);
-            if (matcher.matches()) {
-                return matcher.group(1);
+            Matcher matcher1 = TAX_YEAR_PATTERN_2017_TO_2023.matcher(line);
+            Matcher matcher2 = TAX_YEAR_PATTERN_2024_PLUS.matcher(line);
+            if (matcher1.matches()) {
+                return matcher1.group(1);
+            }
+            if (matcher2.matches()) {
+                return matcher2.group(1);
             }
         }
 
-        throw new IllegalStateException("Unable to find tax year - expecting to find 1 line matching: " + TAX_YEAR_PATTERN.pattern());
+        throw new IllegalStateException("Unable to find tax year.");
     }
 
 

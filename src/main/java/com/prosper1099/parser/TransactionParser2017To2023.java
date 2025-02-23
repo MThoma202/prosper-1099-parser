@@ -22,9 +22,9 @@ import org.springframework.stereotype.Component;
  * Responsible for parsing the 1099-B transactions from the PDF text.
  */
 @Component
-public class TransactionParser2017Plus implements TransactionParser {
+public class TransactionParser2017To2023 implements TransactionParser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionParser2017Plus.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionParser2017To2023.class);
 
     private static final String DESCRIPTION_PREFIX = "Prosper Note ";
 
@@ -37,7 +37,8 @@ public class TransactionParser2017Plus implements TransactionParser {
 
     private final TransactionParsers transactionParsers;
 
-    @Autowired TransactionParser2017Plus(TransactionParsers transactionParsers) {
+    @Autowired
+    TransactionParser2017To2023(TransactionParsers transactionParsers) {
         this.transactionParsers = transactionParsers;
     }
 
@@ -50,23 +51,6 @@ public class TransactionParser2017Plus implements TransactionParser {
         transactionParsers.registerTransactionParser("2021", this);
         transactionParsers.registerTransactionParser("2022", this);
         transactionParsers.registerTransactionParser("2023", this);
-        transactionParsers.registerTransactionParser("2024", this);
-        transactionParsers.registerTransactionParser("2025", this);
-        transactionParsers.registerTransactionParser("2026", this);
-        transactionParsers.registerTransactionParser("2027", this);
-        transactionParsers.registerTransactionParser("2028", this);
-        transactionParsers.registerTransactionParser("2029", this);
-        transactionParsers.registerTransactionParser("2030", this);
-        transactionParsers.registerTransactionParser("2031", this);
-        transactionParsers.registerTransactionParser("2032", this);
-        transactionParsers.registerTransactionParser("2033", this);
-        transactionParsers.registerTransactionParser("2034", this);
-        transactionParsers.registerTransactionParser("2035", this);
-        transactionParsers.registerTransactionParser("2036", this);
-        transactionParsers.registerTransactionParser("2037", this);
-        transactionParsers.registerTransactionParser("2038", this);
-        transactionParsers.registerTransactionParser("2039", this);
-        transactionParsers.registerTransactionParser("2040", this);
     }
 
     @Override
