@@ -1,9 +1,9 @@
 # prosper-1099-parser
 This is a simple project to convert PDF files containing Prosper 1099-B transactions to CSV format.
 
-IRS guidelines require transactions for which the cost basis was **not** reported to the IRS to be included as separate line items on Form 8949. Prosper 1099-B transactions fall into this category.
+## Years 2017 to 2023
 
-This project can be used to convert the transactions into CSV format that can then be copied and written to a CSV file.
+IRS guidelines require transactions for which the cost basis was **not** reported to the IRS to be included as separate line items on Form 8949. Prosper 1099-B transactions **from 2023 and earlier** fall into this category.  This project can be used to convert the transactions into CSV format that can then be copied and written to a CSV file.
 
 The CSV file can then be:
 1. Imported into TaxAct to automatically generate Form 8949
@@ -16,6 +16,10 @@ The CSV file can then be:
 
 For option 1, use [this referral link](https://refer.taxact.com/s/MarkThomas14) to save 20% off TaxAct. This is the option I've been using for the last few years and it works great.
 For option 2, use [this referral link](https://turbo.tax/tm7e7s3c) to save 20% off TurboTax.
+
+## Year 2024 Update
+
+Beginning in 2024 the cost basis was reported to the IRS and categories A and D were used, so we can now report the summary totals on Schedule D, Lines 1a or 8a. I'm assuming this will apply to future years as well and this project is no longer useful or relevant. Thanks everyone who contributed. 🖖
 
 ### Supported Tax Years
 - [2017]
